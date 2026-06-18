@@ -7,14 +7,14 @@ export function criarCadastroProduto(dados) {
     const produto    = dados ? dados.produto : null
     const modoEdicao = produto != null
 
-    // ── Página e card ─────────────────────────────
+    
     const pagina = document.createElement('div')
     pagina.className = 'pagina-cadastro'
 
     const card = document.createElement('div')
     card.className = 'pagina-card'
 
-    // ── Topo: título + botões ─────────────────────
+    
     const topo = document.createElement('div')
     topo.className = 'topo-pagina'
 
