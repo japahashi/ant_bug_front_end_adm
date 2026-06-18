@@ -103,8 +103,9 @@ export function criarCadastroProduto(dados) {
     textoUpload.innerHTML = '🖼️<br><br>Clique para<br>adicionar imagem'
     if (modoEdicao && produto.imagem) textoUpload.style.display = 'none'
 
-    inputImagem.onchange = (evento) => {
-        const arquivo = evento.target.files[0]
+    inputImagem.onchange = () => {
+        const arquivo = inputImagem.files[0]
+
         if (arquivo) {
             imgPreview.src = URL.createObjectURL(arquivo)
             imgPreview.style.display = 'block'
@@ -133,27 +134,37 @@ export function criarCadastroProduto(dados) {
         btnSalvar.textContent = 'Salvando...'
         btnSalvar.disabled = true
 
-        const dadosProduto = { nome, descricao, detalhes, imagem: ''}
+        const formData = new FormData()
+
+        formData.append('nome', nome)
+        formData.append('descricao', descricao)
+        formData.append('detalhes', detalhes)
 
         try {
+            const arquivo = document.getElementById('cp-imagem').files[0]
+
+            if (arquivo) {
+                formData.append('imagem', arquivo)
+            }
+
+            for (let item of formData.entries()) {
+                console.log(item[0], item[1])
+            }
             let resposta
 
             if (modoEdicao) {
                 resposta = await fetch(`${API_URL}/${produto.id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosProduto)
+                    body: formData
                 })
             } else {
                 resposta = await fetch(`${API_URL}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosProduto)
+                    body: formData
                 })
             }
 
             const dadosResposta = await resposta.json()
-            console.log(dadosResposta)
 
             if (!resposta.ok) {
                 throw new Error(

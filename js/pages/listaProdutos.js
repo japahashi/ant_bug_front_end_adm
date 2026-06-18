@@ -43,9 +43,8 @@ export function criarProdutos() {
     cabecalho.className = 'tabela-cabecalho'
     cabecalho.innerHTML = `
         <span>ID</span>
+        <span>Imagem</span>
         <span>Nome</span>
-        <span class="col-usuario">Usuário</span>
-        <span>Ativo</span>
         <span>Ações</span>
     `
 
@@ -83,9 +82,7 @@ async function carregarProdutos() {
         if (!resposta.ok) throw new Error('Erro ao buscar produtos.')
 
         const dados = await resposta.json()
-        console.log(dados)
 
-        console.log('CORPO:', corpo)
         mostrarProdutos(
             corpo,
             dados.response.produto
@@ -98,7 +95,6 @@ async function carregarProdutos() {
 
 // ── Monta as linhas da tabela ─────────────────────
 function mostrarProdutos(corpo, produtos) {
-    console.log('CORPO DENTRO:', corpo)
     corpo.innerHTML = ''
 
     if (produtos.length === 0) {
@@ -109,15 +105,19 @@ function mostrarProdutos(corpo, produtos) {
     produtos.forEach(produto => {
         const linha = document.createElement('div')
         linha.className = 'tabela-linha'
-
-        const badge = produto.ativo
-        '<span class="badge-ativo">Ativo</span>'
+        const imagemProduto =
+            produto.imagem &&
+                produto.imagem !== 'undefined'
+                ? produto.imagem
+                : './img/image.png'
 
         linha.innerHTML = `
-            <span>${produto.id}</span>
+        <span>${produto.id}</span>
+        <img src="${imagemProduto || './img/image.png'}"
+        alt="${produto.nome}"
+        class="miniatura-produto"
+    >
             <span>${produto.nome}</span>
-            <span class="col-usuario">Administrador</span>
-            <span>${badge}</span>
         `
 
         // Botão editar (lápis)

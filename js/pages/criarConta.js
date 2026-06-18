@@ -2,6 +2,8 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
+const API_URL = "http://localhost:8080/v1/planetaverde/admin/administrador"
+
 export function criarCriarConta() {
 
     const card = document.createElement('div')
@@ -53,7 +55,7 @@ export function criarCriarConta() {
         btnCriar.disabled = true
 
         try {
-            const resposta = await fetch('https://sua-api.com/auth/register', {
+            const resposta = await fetch(`${API_URL}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, email, senha })
