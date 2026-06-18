@@ -2,19 +2,21 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin/produto'
+
 export function criarCadastroProduto(dados) {
 
-    const produto    = dados ? dados.produto : null
+    const produto = dados ? dados.produto : null
     const modoEdicao = produto != null
 
-    
+
     const pagina = document.createElement('div')
     pagina.className = 'pagina-cadastro'
 
     const card = document.createElement('div')
     card.className = 'pagina-card'
 
-    
+
     const topo = document.createElement('div')
     topo.className = 'topo-pagina'
 
@@ -72,7 +74,7 @@ export function criarCadastroProduto(dados) {
             <div class="campo-select">
                 <label>SubCategoria</label>
                 <select id="cp-subcategoria" size="6">
-                    <option value="">Selecione uma categoria</option>
+                    <option value="1">Fruta</option>
                 </select>
             </div>
         </div>
@@ -101,8 +103,9 @@ export function criarCadastroProduto(dados) {
     textoUpload.innerHTML = '🖼️<br><br>Clique para<br>adicionar imagem'
     if (modoEdicao && produto.imagem) textoUpload.style.display = 'none'
 
-    inputImagem.onchange = (evento) => {
-        const arquivo = evento.target.files[0]
+    inputImagem.onchange = () => {
+        const arquivo = inputImagem.files[0]
+
         if (arquivo) {
             imgPreview.src = URL.createObjectURL(arquivo)
             imgPreview.style.display = 'block'
@@ -118,9 +121,9 @@ export function criarCadastroProduto(dados) {
 
     // ── Salvar ────────────────────────────────────
     btnSalvar.onclick = async () => {
-        const nome      = document.getElementById('cp-nome').value.trim()
+        const nome = document.getElementById('cp-nome').value.trim()
         const descricao = document.getElementById('cp-descricao').value.trim()
-        const detalhes  = document.getElementById('cp-detalhes').value.trim()
+        const detalhes = document.getElementById('cp-detalhes').value.trim()
         const categoria = document.getElementById('cp-categoria').value
 
         if (!nome) {
@@ -131,26 +134,43 @@ export function criarCadastroProduto(dados) {
         btnSalvar.textContent = 'Salvando...'
         btnSalvar.disabled = true
 
-        const dadosProduto = { nome, descricao, detalhes, categoriaId: categoria, ativo: true }
+        const formData = new FormData()
+
+        formData.append('nome', nome)
+        formData.append('descricao', descricao)
+        formData.append('detalhes', detalhes)
 
         try {
+            const arquivo = document.getElementById('cp-imagem').files[0]
+
+            if (arquivo) {
+                formData.append('imagem', arquivo)
+            }
+
+            for (let item of formData.entries()) {
+                console.log(item[0], item[1])
+            }
             let resposta
 
             if (modoEdicao) {
-                resposta = await fetch(`https://sua-api.com/produtos/${produto.id}`, {
+                resposta = await fetch(`${API_URL}/${produto.id}`, {
                     method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosProduto)
+                    body: formData
                 })
             } else {
-                resposta = await fetch('https://sua-api.com/produtos', {
+                resposta = await fetch(`${API_URL}`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(dadosProduto)
+                    body: formData
                 })
             }
 
-            if (!resposta.ok) throw new Error('Erro ao salvar produto.')
+            const dadosResposta = await resposta.json()
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dadosResposta.message || JSON.stringify(dadosResposta)
+                )
+            }
 
             mostrarMensagem(modoEdicao ? 'Produto atualizado!' : 'Produto cadastrado!')
             renderizarPagina('produtos')

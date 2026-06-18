@@ -2,6 +2,8 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin/produto'
+
 export function criarProdutos() {
 
     // ── Página e card ─────────────────────────────
@@ -41,9 +43,8 @@ export function criarProdutos() {
     cabecalho.className = 'tabela-cabecalho'
     cabecalho.innerHTML = `
         <span>ID</span>
+        <span>Imagem</span>
         <span>Nome</span>
-        <span class="col-usuario">Usuário</span>
-        <span>Ativo</span>
         <span>Ações</span>
     `
 
@@ -55,22 +56,37 @@ export function criarProdutos() {
     card.append(topo, btnAdicionar, tabelaWrap)
     pagina.appendChild(card)
 
-    carregarProdutos()
+
+    setTimeout(() => {
+        carregarProdutos()
+    }, 100)
 
     return pagina
+
+
 }
 
 // ── Busca produtos na API ─────────────────────────
 async function carregarProdutos() {
     const corpo = document.getElementById('corpo-tabela')
 
+
+    if (!corpo) {
+        console.log('Tabela ainda não existe.')
+        return
+    }
+
     try {
-        const resposta = await fetch('https://sua-api.com/produtos')
+        const resposta = await fetch(`${API_URL}`)
 
         if (!resposta.ok) throw new Error('Erro ao buscar produtos.')
 
-        const produtos = await resposta.json()
-        mostrarProdutos(corpo, produtos)
+        const dados = await resposta.json()
+
+        mostrarProdutos(
+            corpo,
+            dados.response.produto
+        )
 
     } catch (erro) {
         corpo.innerHTML = `<div class="tabela-vazia">Erro: ${erro.message}</div>`
@@ -89,16 +105,19 @@ function mostrarProdutos(corpo, produtos) {
     produtos.forEach(produto => {
         const linha = document.createElement('div')
         linha.className = 'tabela-linha'
-
-        const badge = produto.ativo
-            ? `<span class="badge-ativo">Ativo</span>`
-            : `<span class="badge-inativo">Inativo</span>`
+        const imagemProduto =
+            produto.imagem &&
+                produto.imagem !== 'undefined'
+                ? produto.imagem
+                : './img/image.png'
 
         linha.innerHTML = `
-            <span>${produto.id}</span>
+        <span>${produto.id}</span>
+        <img src="${imagemProduto || './img/image.png'}"
+        alt="${produto.nome}"
+        class="miniatura-produto"
+    >
             <span>${produto.nome}</span>
-            <span class="col-usuario">${produto.usuario || '—'}</span>
-            <span>${badge}</span>
         `
 
         // Botão editar (lápis)
@@ -130,7 +149,7 @@ async function deletarProduto(produto, corpo) {
     if (!confirmar) return
 
     try {
-        const resposta = await fetch(`https://sua-api.com/produtos/${produto.id}`, {
+        const resposta = await fetch(`${API_URL}/${produto.id}`, {
             method: 'DELETE'
         })
 
