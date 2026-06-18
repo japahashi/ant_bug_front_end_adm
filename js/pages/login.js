@@ -2,6 +2,8 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin'
+
 export function criarLogin() {
 
     const card = document.createElement('div')
@@ -30,7 +32,7 @@ export function criarLogin() {
     btnEntrar.className = 'btn-principal'
     btnEntrar.textContent = 'Entrar'
 
-    btnEntrar.onclick = () => {
+    btnEntrar.onclick = async () => {
         const email = inputEmail.value.trim()
         const senha = inputSenha.value
 
@@ -39,11 +41,40 @@ export function criarLogin() {
             return
         }
 
+        btnEntrar.textContent = "Entrando..."
+        btnEntrar.disabled = true
+
+        try {
+            const respota = await fetch(`${API_URL}/administrador/login`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email, senha})
+            })
+
+            const dados = await respota.json()
+
+            if (!dados.status) {
+                throw new Error(dados.message || 'Email ou senha inválidos.')
+            }
+
+            // Salva o token e marca como logado
+            sessionStorage.setItem('logado', '1')
+            sessionStorage.setItem('token', dados.response.token)
+
+            renderizarPagina('produtos')
+
+        } catch (erro) {
+            mostrarMensagem(erro.message, 'erro')
+            btnEntrar.textContent = 'Entrar'
+            btnEntrar.disabled = false
+        }
+    }
+        
+
         // Por enquanto só marca como logado
         // Quando tiver back-end: trocar por fetch para a API
         sessionStorage.setItem('logado', '1')
         renderizarPagina('produtos')
-    }
 
     card.append(labelEmail, inputEmail, labelSenha, inputSenha, btnEntrar)
     return card

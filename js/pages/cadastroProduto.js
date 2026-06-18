@@ -2,19 +2,21 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin/produto'
+
 export function criarCadastroProduto(dados) {
 
-    const produto    = dados ? dados.produto : null
+    const produto = dados ? dados.produto : null
     const modoEdicao = produto != null
 
-    
+
     const pagina = document.createElement('div')
     pagina.className = 'pagina-cadastro'
 
     const card = document.createElement('div')
     card.className = 'pagina-card'
 
-    
+
     const topo = document.createElement('div')
     topo.className = 'topo-pagina'
 
@@ -72,7 +74,7 @@ export function criarCadastroProduto(dados) {
             <div class="campo-select">
                 <label>SubCategoria</label>
                 <select id="cp-subcategoria" size="6">
-                    <option value="">Selecione uma categoria</option>
+                    <option value="1">Fruta</option>
                 </select>
             </div>
         </div>
@@ -118,9 +120,9 @@ export function criarCadastroProduto(dados) {
 
     // ── Salvar ────────────────────────────────────
     btnSalvar.onclick = async () => {
-        const nome      = document.getElementById('cp-nome').value.trim()
+        const nome = document.getElementById('cp-nome').value.trim()
         const descricao = document.getElementById('cp-descricao').value.trim()
-        const detalhes  = document.getElementById('cp-detalhes').value.trim()
+        const detalhes = document.getElementById('cp-detalhes').value.trim()
         const categoria = document.getElementById('cp-categoria').value
 
         if (!nome) {
@@ -131,26 +133,33 @@ export function criarCadastroProduto(dados) {
         btnSalvar.textContent = 'Salvando...'
         btnSalvar.disabled = true
 
-        const dadosProduto = { nome, descricao, detalhes, categoriaId: categoria, ativo: true }
+        const dadosProduto = { nome, descricao, detalhes, imagem: ''}
 
         try {
             let resposta
 
             if (modoEdicao) {
-                resposta = await fetch(`https://sua-api.com/produtos/${produto.id}`, {
+                resposta = await fetch(`${API_URL}/${produto.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosProduto)
                 })
             } else {
-                resposta = await fetch('https://sua-api.com/produtos', {
+                resposta = await fetch(`${API_URL}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dadosProduto)
                 })
             }
 
-            if (!resposta.ok) throw new Error('Erro ao salvar produto.')
+            const dadosResposta = await resposta.json()
+            console.log(dadosResposta)
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dadosResposta.message || JSON.stringify(dadosResposta)
+                )
+            }
 
             mostrarMensagem(modoEdicao ? 'Produto atualizado!' : 'Produto cadastrado!')
             renderizarPagina('produtos')
