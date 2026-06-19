@@ -1,12 +1,14 @@
 'use strict'
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
+import { uploadParaCloudinary } from '../cloudinary.js'
 
-const API_URL = 'http://localhost:8080/v1/planetaverde/admin/produto'
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin'
 
 export function criarCadastroProduto(dados) {
 
     const produto = dados ? dados.produto : null
+    console.log(produto)
     const modoEdicao = produto != null
 
 
@@ -40,11 +42,18 @@ export function criarCadastroProduto(dados) {
 
     topo.append(titulo, botoesTopo)
 
-    // ── Grid: campos + imagem ─────────────────────
     const grid = document.createElement('div')
     grid.className = 'cadastro-grid'
 
-    // Campos de texto
+    const subcategoriasPorCategoria = {
+        1: ['Grãos', 'Doces Veganos', 'Congelados'],
+        2: ['Batons', 'Cremes Faciais', 'Protetor Solar'],
+        3: ['Camisetas', 'Calçados', 'Casacos'],
+        4: ['Lava-Louças', 'Sabão em Pó', 'Desinfetante'],
+        5: ['Shampoo Sólido', 'Desodorante', 'Creme Dental'],
+        6: ['Bolsas', 'Cintos', 'Carteiras']
+    }
+
     const campos = document.createElement('div')
     campos.innerHTML = `
         <div class="campo-texto">
@@ -74,13 +83,56 @@ export function criarCadastroProduto(dados) {
             <div class="campo-select">
                 <label>SubCategoria</label>
                 <select id="cp-subcategoria" size="6">
-                    <option value="1">Fruta</option>
+                    <option value="">Selecione uma categoria</option>
                 </select>
             </div>
         </div>
     `
+function atualizarSubcategorias() {
+        const categoriaSelecionada = campos.querySelector('#cp-categoria').value
+        const selectSubcategoria = campos.querySelector('#cp-subcategoria')
 
-    // Caixa de imagem (preview local)
+        const opcoes = subcategoriasPorCategoria[categoriaSelecionada] || []
+
+        if (opcoes.length === 0) {
+            selectSubcategoria.innerHTML = '<option value="">Selecione uma categoria</option>'
+            return
+        }
+
+        selectSubcategoria.innerHTML = opcoes
+            .map((nome, index) => `<option value="${index + 1}">${nome}</option>`)
+            .join('')
+    }
+
+    campos.querySelector('#cp-categoria').addEventListener('change', atualizarSubcategorias)
+
+    if (modoEdicao && produto) {
+        console.log('Dados do produto recebidos com sucesso:', produto)
+
+        const selectCategoria = campos.querySelector('#cp-categoria')
+        const selectSubcategoria = campos.querySelector('#cp-subcategoria')
+
+        if (produto.categoriaNome) {
+            for (let i = 0; i < selectCategoria.options.length; i++) {
+                if (selectCategoria.options[i].text === produto.categoriaNome) {
+                    selectCategoria.selectedIndex = i
+                    break
+                }
+            }
+
+            atualizarSubcategorias()
+
+            if (produto.subcategoriaNome) {
+                for (let i = 0; i < selectSubcategoria.options.length; i++) {
+                    if (selectSubcategoria.options[i].text === produto.subcategoriaNome) {
+                        selectSubcategoria.selectedIndex = i
+                        break
+                    }
+                }
+            }
+        }
+    }
+
     const caixaImagem = document.createElement('div')
     caixaImagem.className = 'caixa-imagem'
 
@@ -119,46 +171,68 @@ export function criarCadastroProduto(dados) {
     card.append(topo, grid)
     pagina.appendChild(card)
 
-    // ── Salvar ────────────────────────────────────
     btnSalvar.onclick = async () => {
+        // 1. CAPTURA DE TODOS OS CAMPOS
         const nome = document.getElementById('cp-nome').value.trim()
         const descricao = document.getElementById('cp-descricao').value.trim()
         const detalhes = document.getElementById('cp-detalhes').value.trim()
         const categoria = document.getElementById('cp-categoria').value
+        const arquivo = document.getElementById('cp-imagem').files[0] 
 
         if (!nome) {
             mostrarMensagem('O nome é obrigatório.', 'erro')
             return
         }
+        if (!categoria) {
+            mostrarMensagem('Por favor, selecione uma categoria.', 'erro')
+            return
+        }
+
+        if (!modoEdicao && !arquivo) {
+            mostrarMensagem('A imagem do produto é obrigatória.', 'erro')
+            return
+        }
+
+        if (arquivo) {
+            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/webp']
+            const tamanhoMaximo = 2 * 1024 * 1024 // 2MB em Bytes
+
+            if (!tiposPermitidos.includes(arquivo.type)) {
+                mostrarMensagem('Formato inválido! Escolha uma imagem JPG, PNG ou WEBP.', 'erro')
+                return
+            }
+
+            if (arquivo.size > tamanhoMaximo) {
+                mostrarMensagem('A imagem é muito pesada! O limite máximo é de 2MB.', 'erro')
+                return
+            }
+        }
 
         btnSalvar.textContent = 'Salvando...'
         btnSalvar.disabled = true
 
-        const formData = new FormData()
-
-        formData.append('nome', nome)
-        formData.append('descricao', descricao)
-        formData.append('detalhes', detalhes)
-
         try {
-            const arquivo = document.getElementById('cp-imagem').files[0]
+            let urlImagem = modoEdicao ? produto.imagem : ''
 
             if (arquivo) {
-                formData.append('imagem', arquivo)
+                urlImagem = await uploadParaCloudinary(arquivo)
             }
 
-            for (let item of formData.entries()) {
-                console.log(item[0], item[1])
-            }
+            const formData = new FormData()
+            formData.append('nome', nome)
+            formData.append('descricao', descricao)
+            formData.append('detalhes', detalhes)
+            formData.append('imagem', urlImagem)
+
             let resposta
 
             if (modoEdicao) {
-                resposta = await fetch(`${API_URL}/${produto.id}`, {
+                resposta = await fetch(`${API_URL}/produto/${produto.id}`, {
                     method: 'PUT',
                     body: formData
                 })
             } else {
-                resposta = await fetch(`${API_URL}`, {
+                resposta = await fetch(`${API_URL}/produto`, {
                     method: 'POST',
                     body: formData
                 })
@@ -167,9 +241,31 @@ export function criarCadastroProduto(dados) {
             const dadosResposta = await resposta.json()
 
             if (!resposta.ok) {
-                throw new Error(
-                    dadosResposta.message || JSON.stringify(dadosResposta)
-                )
+                throw new Error(dadosResposta.message || JSON.stringify(dadosResposta))
+            }
+
+            const idProduto = modoEdicao ? produto.id : dadosResposta.response.id
+
+            if (modoEdicao) {
+                await fetch(`${API_URL}/categoria-produto/produto/${idProduto}`, {
+                    method: 'DELETE'
+                })
+            }
+            const formDataVinculo = new FormData()
+            formDataVinculo.append('id_categoria', categoria)
+            formDataVinculo.append('id_produto', idProduto)
+
+            const respostaVinculo = await fetch(`${API_URL}/categoria-produto`, {
+                method: 'POST',
+                body: formDataVinculo
+            })
+
+            const dadosVinculo = await respostaVinculo.json()
+
+            if (!dadosVinculo.status) {
+                console.log('Aviso: produto salvo, mas não foi possível vincular a categoria.', dadosVinculo)
+                mostrarMensagem('Produto salvo, mas houve um erro ao vincular a categoria.', 'erro')
+                return
             }
 
             mostrarMensagem(modoEdicao ? 'Produto atualizado!' : 'Produto cadastrado!')
