@@ -2,18 +2,16 @@
 
 import { renderizarPagina, mostrarMensagem } from '../main.js'
 
-const API_URL = 'http://localhost:8080/v1/planetaverde/admin/produto'
+const API_URL = 'http://localhost:8080/v1/planetaverde/admin'
 
 export function criarProdutos() {
 
-    // ── Página e card ─────────────────────────────
     const pagina = document.createElement('div')
     pagina.className = 'pagina-lista'
 
     const card = document.createElement('div')
     card.className = 'pagina-card'
 
-    // ── Topo: título + botão Criar Conta ──────────
     const topo = document.createElement('div')
     topo.className = 'topo-pagina'
 
@@ -28,14 +26,12 @@ export function criarProdutos() {
 
     topo.append(titulo, btnCriarConta)
 
-    // ── Botão Adicionar ───────────────────────────
     const btnAdicionar = document.createElement('button')
     btnAdicionar.type = 'button'
     btnAdicionar.className = 'btn-icone'
     btnAdicionar.innerHTML = `<img src="./img/mais.png" alt="+"> Adicionar`
     btnAdicionar.onclick = () => renderizarPagina('cadastroProduto')
 
-    // ── Tabela ────────────────────────────────────
     const tabelaWrap = document.createElement('div')
     tabelaWrap.className = 'tabela-wrap'
 
@@ -45,6 +41,7 @@ export function criarProdutos() {
         <span>ID</span>
         <span>Imagem</span>
         <span>Nome</span>
+        <span>Categoria</span>
         <span>Ações</span>
     `
 
@@ -56,44 +53,47 @@ export function criarProdutos() {
     card.append(topo, btnAdicionar, tabelaWrap)
     pagina.appendChild(card)
 
-
     setTimeout(() => {
         carregarProdutos()
     }, 100)
 
     return pagina
-
-
 }
 
-// ── Busca produtos na API ─────────────────────────
 async function carregarProdutos() {
     const corpo = document.getElementById('corpo-tabela')
 
-
     if (!corpo) {
-        console.log('Tabela ainda não existe.')
         return
     }
 
     try {
-        const resposta = await fetch(`${API_URL}`)
+        const resposta = await fetch(`${API_URL}/categoria`)
 
         if (!resposta.ok) throw new Error('Erro ao buscar produtos.')
 
         const dados = await resposta.json()
+        const categorias = dados.response.categoria
 
-        mostrarProdutos(
-            corpo,
-            dados.response.produto
-        )
+        const produtos = []
+        for (let categoria of categorias) {
+            if (categoria.produtos && categoria.produtos.length > 0) {
+                for (let produto of categoria.produtos) {
+                    produtos.push({
+                        ...produto,
+                        categoriaNome: categoria.nome
+                    })
+                }
+            }
+        }
+
+        mostrarProdutos(corpo, produtos)
 
     } catch (erro) {
         corpo.innerHTML = `<div class="tabela-vazia">Erro: ${erro.message}</div>`
     }
 }
 
-// ── Monta as linhas da tabela ─────────────────────
 function mostrarProdutos(corpo, produtos) {
     corpo.innerHTML = ''
 
@@ -105,29 +105,25 @@ function mostrarProdutos(corpo, produtos) {
     produtos.forEach(produto => {
         const linha = document.createElement('div')
         linha.className = 'tabela-linha'
+
         const imagemProduto =
-            produto.imagem &&
-                produto.imagem !== 'undefined'
+            produto.imagem && produto.imagem !== 'undefined'
                 ? produto.imagem
                 : './img/image.png'
 
         linha.innerHTML = `
-        <span>${produto.id}</span>
-        <img src="${imagemProduto || './img/image.png'}"
-        alt="${produto.nome}"
-        class="miniatura-produto"
-    >
+            <span>${produto.id}</span>
+            <img src="${imagemProduto}" alt="${produto.nome}" class="miniatura-produto">
             <span>${produto.nome}</span>
+            <span>${produto.categoriaNome || '—'}</span>
         `
 
-        // Botão editar (lápis)
         const btnEditar = document.createElement('button')
         btnEditar.type = 'button'
         btnEditar.className = 'btn-acao'
         btnEditar.innerHTML = `<img src="./img/lapis.png" alt="Editar">`
         btnEditar.onclick = () => renderizarPagina('cadastroProduto', { produto })
 
-        // Botão excluir (lixeira)
         const btnDeletar = document.createElement('button')
         btnDeletar.type = 'button'
         btnDeletar.className = 'btn-acao'
@@ -143,13 +139,12 @@ function mostrarProdutos(corpo, produtos) {
     })
 }
 
-// ── Deleta um produto ─────────────────────────────
 async function deletarProduto(produto, corpo) {
     const confirmar = confirm(`Excluir "${produto.nome}"?`)
     if (!confirmar) return
 
     try {
-        const resposta = await fetch(`${API_URL}/${produto.id}`, {
+        const resposta = await fetch(`${API_URL}/produto/${produto.id}`, {
             method: 'DELETE'
         })
 

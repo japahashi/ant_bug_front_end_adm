@@ -1,22 +1,23 @@
 /* ================================
    CORES
    ================================ */
-   :root {
-    --verde-escuro:  #2D5A3D;
-    --verde-medio:   #4A7C59;
-    --verde-fundo:   #659860;
-    --verde-claro:   #C8DCC8;
-    --verde-botao:   #5A8A68;
-    --creme-fundo:   #F7F8F2;
-    --creme-card:    #EDE8DC;
-    --creme-input:   #E0DACE;
-    --creme-tabela:  #D5CFBF;
-    --texto-escuro:  #1A2E1A;
-    --texto-medio:   #2D4A2D;
-    --texto-fraco:   #6B7B6B;
-    --vermelho:      #B85C5C;
-    --branco:        #FFFFFF;
+:root {
+    --verde-escuro: #2D5A3D;
+    --verde-medio: #4A7C59;
+    --verde-fundo: #659860;
+    --verde-claro: #C8DCC8;
+    --verde-botao: #5A8A68;
+    --creme-fundo: #F7F8F2;
+    --creme-card: #EDE8DC;
+    --creme-input: #E0DACE;
+    --creme-tabela: #D5CFBF;
+    --texto-escuro: #1A2E1A;
+    --texto-medio: #2D4A2D;
+    --texto-fraco: #6B7B6B;
+    --vermelho: #B85C5C;
+    --branco: #FFFFFF;
 }
+
 /* ================================
    RESET
    ================================ */
@@ -25,6 +26,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
     min-height: 100vh;
     background-color: var(--verde-fundo);
@@ -33,6 +35,7 @@ body {
     display: flex;
     flex-direction: column;
 }
+
 /* ================================
    HEADER
    ================================ */
@@ -48,6 +51,7 @@ body {
     top: 0;
     z-index: 10;
 }
+
 .header-logo {
     display: flex;
     align-items: center;
@@ -58,22 +62,26 @@ body {
     height: 150px;
     width: 150px;
 }
+
 .logo {
     width: 52px;
     height: 52px;
     object-fit: contain;
 }
+
 .marca-nome {
     font-size: 0.9rem;
     font-weight: bold;
     color: var(--verde-escuro);
     letter-spacing: 0.1em;
 }
+
 .marca-sub {
     font-size: 0.72rem;
     color: var(--verde-medio);
     letter-spacing: 0.14em;
 }
+
 .btn-sair {
     background: transparent;
     border: 1.5px solid var(--verde-medio);
@@ -83,10 +91,12 @@ body {
     font-size: 0.85rem;
     cursor: pointer;
 }
+
 .btn-sair:hover {
     background: var(--verde-medio);
     color: var(--branco);
 }
+
 /* ================================
    MAIN
    ================================ */
@@ -97,6 +107,7 @@ body {
     justify-content: center;
     padding: 24px 16px;
 }
+
 /* ================================
    CARD — login e criar conta
    ================================ */
@@ -111,6 +122,7 @@ body {
     flex-direction: column;
     gap: 4px;
 }
+
 /* ================================
    CAMPOS — login e criar conta
    ================================ */
@@ -121,6 +133,7 @@ body {
     margin-top: 14px;
     margin-bottom: 4px;
 }
+
 .input-campo {
     height: 40px;
     background: var(--creme-input);
@@ -132,9 +145,11 @@ body {
     outline: none;
     width: 100%;
 }
+
 .input-campo:focus {
     border-color: var(--verde-medio);
 }
+
 /* ================================
    BOTÕES
    ================================ */
@@ -150,9 +165,11 @@ body {
     cursor: pointer;
     margin-top: 24px;
 }
+
 .btn-principal:hover {
     background: var(--verde-escuro);
 }
+
 .btn-secundario {
     height: 40px;
     background: var(--creme-card);
@@ -163,9 +180,11 @@ body {
     cursor: pointer;
     padding: 0 16px;
 }
+
 .btn-secundario:hover {
     background: var(--verde-claro);
 }
+
 .btn-icone {
     display: inline-flex;
     align-items: center;
@@ -178,14 +197,17 @@ body {
     font-size: 0.85rem;
     cursor: pointer;
 }
+
 .btn-icone:hover {
     background: var(--verde-claro);
 }
+
 .btn-icone img {
     width: 20px;
     height: 20px;
     object-fit: contain;
 }
+
 .btn-acao {
     background: transparent;
     border: none;
@@ -196,14 +218,17 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .btn-acao:hover {
     background: var(--creme-input);
 }
+
 .btn-acao img {
     width: 22px;
     height: 22px;
     object-fit: contain;
 }
+
 /* ================================
    PÁGINA LISTA DE PRODUTOS
    ================================ */
@@ -211,12 +236,14 @@ body {
     width: 100%;
     max-width: 960px;
 }
+
 .pagina-card {
     background: var(--creme-fundo);
     border-radius: 16px;
     padding: 32px;
     box-shadow: 0 4px 24px rgba(45, 90, 61, 0.12);
 }
+
 .topo-pagina {
     display: flex;
     align-items: center;
@@ -225,12 +252,14 @@ body {
     flex-wrap: wrap;
     gap: 12px;
 }
+
 .topo-pagina h2 {
     font-size: 1.8rem;
     font-weight: normal;
     font-style: italic;
     color: var(--texto-escuro);
 }
+
 /* ================================
    TABELA
    ================================ */
@@ -240,6 +269,7 @@ body {
     overflow: hidden;
     margin-top: 16px;
 }
+
 .tabela-cabecalho {
     background: var(--creme-tabela);
     display: grid;
@@ -249,6 +279,7 @@ body {
     font-size: 0.85rem;
     color: var(--texto-medio);
 }
+
 .tabela-linha {
     display: grid;
     grid-template-columns: 60px 1fr 1fr 90px 110px;
@@ -257,15 +288,18 @@ body {
     align-items: center;
     font-size: 0.88rem;
 }
+
 .tabela-linha:hover {
     background: var(--creme-input);
 }
+
 .acoes {
     display: flex;
     gap: 6px;
     justify-content: flex-end;
     align-items: center;
 }
+
 .badge-ativo {
     display: inline-block;
     padding: 3px 10px;
@@ -275,6 +309,7 @@ body {
     background: var(--verde-claro);
     color: var(--verde-escuro);
 }
+
 .badge-inativo {
     display: inline-block;
     padding: 3px 10px;
@@ -284,6 +319,7 @@ body {
     background: var(--creme-tabela);
     color: var(--texto-fraco);
 }
+
 .tabela-vazia {
     text-align: center;
     padding: 48px 16px;
@@ -291,12 +327,13 @@ body {
     font-style: italic;
 }
 
-.miniatura-produto{
+.miniatura-produto {
     width: 50px;
     height: 50px;
     object-fit: cover;
     border-radius: 8px;
 }
+
 /* ================================
    PÁGINA CADASTRO DE PRODUTO
    ================================ */
@@ -304,11 +341,13 @@ body {
     width: 100%;
     max-width: 880px;
 }
+
 .botoes-topo {
     display: flex;
     gap: 10px;
     align-items: center;
 }
+
 .cadastro-grid {
     display: grid;
     grid-template-columns: 1fr 240px;
@@ -318,17 +357,20 @@ body {
     padding: 24px;
     margin-top: 16px;
 }
+
 .campo-texto {
     display: flex;
     flex-direction: column;
     gap: 6px;
     margin-bottom: 14px;
 }
+
 .campo-texto label {
     font-size: 0.9rem;
     font-style: italic;
     color: var(--texto-medio);
 }
+
 .campo-texto input,
 .campo-texto textarea {
     background: var(--creme-input);
@@ -341,19 +383,23 @@ body {
     font-family: Arial, sans-serif;
     width: 100%;
 }
+
 .campo-texto input:focus,
 .campo-texto textarea:focus {
     border-color: var(--verde-medio);
 }
+
 .campo-texto textarea {
     min-height: 70px;
     resize: vertical;
 }
+
 .grid-categorias {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
 }
+
 .campo-select label {
     display: block;
     font-size: 0.9rem;
@@ -361,6 +407,7 @@ body {
     color: var(--texto-medio);
     margin-bottom: 6px;
 }
+
 .campo-select select {
     width: 100%;
     min-height: 120px;
@@ -372,9 +419,11 @@ body {
     color: var(--texto-escuro);
     outline: none;
 }
+
 .campo-select select:focus {
     border-color: var(--verde-medio);
 }
+
 .caixa-imagem {
     background: var(--branco);
     border: 2px dashed var(--verde-claro);
@@ -388,9 +437,11 @@ body {
     cursor: pointer;
     text-align: center;
 }
+
 .caixa-imagem:hover {
     border-color: var(--verde-medio);
 }
+
 .caixa-imagem input[type="file"] {
     position: absolute;
     inset: 0;
@@ -399,6 +450,7 @@ body {
     width: 100%;
     height: 100%;
 }
+
 .caixa-imagem .texto-upload {
     color: var(--texto-fraco);
     font-size: 0.82rem;
@@ -406,6 +458,7 @@ body {
     padding: 16px;
     line-height: 1.6;
 }
+
 .caixa-imagem img.preview {
     position: absolute;
     inset: 0;
@@ -413,7 +466,9 @@ body {
     height: 100%;
     object-fit: cover;
     display: none;
+    pointer-events: none;
 }
+
 /* ================================
    TOAST
    ================================ */
@@ -432,17 +487,23 @@ body {
     z-index: 9999;
     pointer-events: none;
 }
+
 #toast.visivel {
     transform: translateX(-50%) translateY(0);
     opacity: 1;
 }
+
 #toast.erro {
     background: var(--vermelho);
 }
+
 /* ================================
    UTILITÁRIO
    ================================ */
-.escondido { display: none !important; }
+.escondido {
+    display: none !important;
+}
+
 /* ================================
    TABLET — até 768px
    ================================ */
@@ -451,35 +512,66 @@ body {
         align-items: flex-start;
         padding-top: 24px;
     }
+
     .card {
         padding: 28px 24px;
     }
+
     .pagina-card {
         padding: 20px 16px;
     }
+
     .tabela-cabecalho,
     .tabela-linha {
-        grid-template-columns: 50px 1fr 80px 100px;
+        grid-template-columns: 60px 70px 1fr 1fr 110px;
     }
-    .col-usuario { display: none; }
+
+    .col-usuario {
+        display: none;
+    }
+
     .cadastro-grid {
         grid-template-columns: 1fr;
     }
+
     .grid-categorias {
         grid-template-columns: 1fr;
     }
 }
+
 /* ================================
    CELULAR — até 480px
    ================================ */
 @media (max-width: 480px) {
-    #header { padding: 8px 14px; }
-    .logo { width: 40px; height: 40px; }
-    .marca-nome { font-size: 0.75rem; }
-    .marca-sub  { font-size: 0.62rem; }
-    .card { padding: 24px 16px; }
-    .topo-pagina h2 { font-size: 1.3rem; }
-    .tabela-cabecalho { display: none; }
+    #header {
+        padding: 8px 14px;
+    }
+
+    .logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .marca-nome {
+        font-size: 0.75rem;
+    }
+
+    .marca-sub {
+        font-size: 0.62rem;
+    }
+
+    .card {
+        padding: 24px 16px;
+    }
+
+    .topo-pagina h2 {
+        font-size: 1.3rem;
+    }
+
+    .tabela-cabecalho {
+        display: none;
+    }
+
     .tabela-linha {
         grid-template-columns: 1fr;
         border: 1px solid var(--creme-tabela);
@@ -487,6 +579,12 @@ body {
         margin-bottom: 8px;
         gap: 4px;
     }
-    .col-usuario { display: none; }
-    .acoes { justify-content: flex-start; }
+
+    .col-usuario {
+        display: none;
+    }
+
+    .acoes {
+        justify-content: flex-start;
+    }
 }

@@ -47,8 +47,8 @@ export function criarLogin() {
         try {
             const respota = await fetch(`${API_URL}/administrador/login`, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({email, senha})
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, senha })
             })
 
             const dados = await respota.json()
@@ -69,12 +69,8 @@ export function criarLogin() {
             btnEntrar.disabled = false
         }
     }
-        
-
-        // Por enquanto só marca como logado
-        // Quando tiver back-end: trocar por fetch para a API
-        sessionStorage.setItem('logado', '1')
-        renderizarPagina('produtos')
+    sessionStorage.setItem('logado', '1')
+    renderizarPagina('produtos')
 
     card.append(labelEmail, inputEmail, labelSenha, inputSenha, btnEntrar)
     return card
