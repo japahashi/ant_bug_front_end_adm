@@ -107,8 +107,6 @@ function atualizarSubcategorias() {
     campos.querySelector('#cp-categoria').addEventListener('change', atualizarSubcategorias)
 
     if (modoEdicao && produto) {
-        console.log('Dados do produto recebidos com sucesso:', produto)
-
         const selectCategoria = campos.querySelector('#cp-categoria')
         const selectSubcategoria = campos.querySelector('#cp-subcategoria')
 
@@ -172,7 +170,6 @@ function atualizarSubcategorias() {
     pagina.appendChild(card)
 
     btnSalvar.onclick = async () => {
-        // 1. CAPTURA DE TODOS OS CAMPOS
         const nome = document.getElementById('cp-nome').value.trim()
         const descricao = document.getElementById('cp-descricao').value.trim()
         const detalhes = document.getElementById('cp-detalhes').value.trim()
@@ -263,7 +260,6 @@ function atualizarSubcategorias() {
             const dadosVinculo = await respostaVinculo.json()
 
             if (!dadosVinculo.status) {
-                console.log('Aviso: produto salvo, mas não foi possível vincular a categoria.', dadosVinculo)
                 mostrarMensagem('Produto salvo, mas houve um erro ao vincular a categoria.', 'erro')
                 return
             }

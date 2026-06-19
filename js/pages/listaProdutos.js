@@ -64,7 +64,6 @@ async function carregarProdutos() {
     const corpo = document.getElementById('corpo-tabela')
 
     if (!corpo) {
-        console.log('Tabela ainda não existe.')
         return
     }
 
